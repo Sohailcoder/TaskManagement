@@ -1,7 +1,7 @@
 import {React,useState,useEffect} from 'react'
 import TaskDetails from './TaskDetails';
 import Sidebar from './Slidebar';
-import { Navigate, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 function AdminTask() {
   const [users, setUsers] = useState([]);

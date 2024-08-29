@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { RiCheckboxCircleFill, RiCheckboxCircleLine } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { GrUpdate } from "react-icons/gr";
-import { IoClose } from "react-icons/io5";
 import Swal from "sweetalert2";
 
 const TaskList = () => {
