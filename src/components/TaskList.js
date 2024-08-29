@@ -59,7 +59,7 @@ const TaskList = () => {
     };
 
     fetchTasks();
-  }, [currentPage, tasksPerPage, reload]);
+  }, [currentPage, tasksPerPage, reload,token]);
 
   const handleAddTask = async () => {
     if (taskTitle.trim() === "" || !dueDate || description.trim() === "") return;
