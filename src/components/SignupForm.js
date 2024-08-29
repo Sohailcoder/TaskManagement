@@ -1,0 +1,181 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
+const SignupForm = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: '',
+  });
+
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic form validation
+    const newErrors = {};
+    if (!formData.name) newErrors.name = 'Full Name is required';
+    if (!formData.email) newErrors.email = 'Email Address is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+    if (formData.password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (!formData.role) newErrors.role = 'Role selection is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors({});
+    setSuccessMessage('');
+
+    try {
+      const response = await fetch('https://taskmanagement-crsm.onrender.com/api/users/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+  
+      const result = await response.json();
+      console.log(result);
+  
+      if (response.ok) {
+        Swal.fire({
+          title: 'Success',
+          text: result.message || 'Signup successful! Please check your email to verify your account.',
+          icon: 'success',
+        });
+        setFormData({ name: '', email: '', password: '', role: '' });
+        setConfirmPassword('');
+        navigate('/login');
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: result.error || 'An error occurred. Please try again.',
+          icon: 'warning',
+        });
+        setErrors({ api: result.message });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'An error occurred. Please try again.',
+        icon: 'error',
+      });
+      setErrors({ api: 'An error occurred. Please try again.' });
+    }
+  };
+
+  return (
+    <div className="gradient-bg h-screen flex items-center justify-center">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-2xl font-semibold mb-6 text-gray-800 text-center">Create Your Account</h1>
+
+        {successMessage && <p className="text-green-500 mb-4 text-center">{successMessage}</p>}
+        {errors.api && <p className="text-red-500 mb-4 text-center">{errors.api}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+              placeholder="John Doe"
+            />
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+              placeholder="example@example.com"
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+              placeholder="********"
+            />
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="block text-gray-700 text-sm font-medium mb-2">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+              placeholder="********"
+            />
+            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="role" className="block text-gray-700 text-sm font-medium mb-2">Select Role</label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+            >
+              <option value="" disabled>Select your role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+            {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role}</p>}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 transition duration-150 ease-in-out"
+          >
+            Sign Up
+          </button>
+        </form>
+
+        <p className="mt-4 text-center text-gray-600 text-sm">
+          Already have an account? <a href="/login" className="text-blue-500 hover:text-blue-600 font-semibold">Login</a>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default SignupForm;

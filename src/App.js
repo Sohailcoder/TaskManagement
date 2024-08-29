@@ -1,24 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm';
+import SignupForm from './components/SignupForm';
+import TaskList from './components/TaskList';
+import AdminTask from './components/AdminTask';
+import ProtectedRoutes from './utils/ProtectedRoutes'; // Ensure this file exists and is correctly implemented
+import TableComponent from './components/TableComponent';
+import Sidebar from './components/Slidebar';
 
 function App() {
+  const isLoggedIn = !!window.localStorage.getItem('Token');
+  const userType = window.localStorage.getItem('role');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {!isLoggedIn ? (
+          <>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signup" element={<SignupForm />} />
+            <Route path="/" element={<Navigate to="/login" />} />
+          </>
+        ) : (
+          <>
+            <Route element={<ProtectedRoutes isLoggedIn={isLoggedIn} userType={userType} />}>
+              {userType === 'user' ? (
+                <>
+                  <Route path="/task" element={<TaskList />} />
+                  <Route path="/" element={<Navigate to="/task" />} />
+                  <Route path="/admin" element={<Navigate to="/task" />} />
+                  
+                </>
+              ) : (
+                <>
+                <Route path="/admin1" element={<TableComponent />} />
+                <Route path="/admin12" element={<Sidebar />} />
+                  <Route path="/admin" element={<AdminTask />} />
+                  <Route path="/" element={<Navigate to="/admin" />} />
+                  <Route path="/task" element={<Navigate to="/admin" />} />
+                </>
+              )}
+            </Route>
+          </>
+        )}
+      </Routes>
+    </Router>
   );
 }
 
