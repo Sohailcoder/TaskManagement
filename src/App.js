@@ -4,9 +4,7 @@ import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import TaskList from './components/TaskList';
 import AdminTask from './components/AdminTask';
-import ProtectedRoutes from './utils/ProtectedRoutes'; // Ensure this file exists and is correctly implemented
-import TableComponent from './components/TableComponent';
-import Sidebar from './components/Slidebar';
+import ProtectedRoutes from './utils/ProtectedRoutes'; 
 
 function App() {
   const isLoggedIn = !!window.localStorage.getItem('Token');
