@@ -33,8 +33,6 @@ function App() {
                 </>
               ) : (
                 <>
-                <Route path="/admin1" element={<TableComponent />} />
-                <Route path="/admin12" element={<Sidebar />} />
                   <Route path="/admin" element={<AdminTask />} />
                   <Route path="/" element={<Navigate to="/admin" />} />
                   <Route path="/task" element={<Navigate to="/admin" />} />
